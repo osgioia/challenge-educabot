@@ -1,20 +1,14 @@
-import express from 'express'
-import cors from 'cors'
-import BooksProvider from './repositories/mocks/booksProvider.ts'
-import MetricsHandler from './handlers/metrics.ts'
+import httpBooksProvider from "./providers/books.ts";
+import { createServer } from "./server/config/server.ts";
+import { config } from "./server/config/environment.ts";
 
-const app = express()
-const PORT = process.env.PORT || 3000
+const PORT = config.port;
 
-app.use(express.json())
-app.use(cors())
-
-const booksProvider = BooksProvider()
-const metricsHandler = MetricsHandler(booksProvider)
-app.get('/', metricsHandler.get)
+const booksProvider = httpBooksProvider();
+const app = createServer(booksProvider);
 
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`)
-})
+  console.log(`Server running on port ${PORT}`);
+});
 
-export { app }
+export { app };
